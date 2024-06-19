@@ -89,7 +89,6 @@ func writeResponse(w http.ResponseWriter, r *Response, message string) {
 
 func init() {
 	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
-
 		action := r.Header.Get("x-action")
 		if action != "encrypt" && action != "decrypt" {
 			http.Error(w, "Please include the 'x-action' header with 'encrypt' or 'decrypt' as the value:\ncurl -H 'x-action: encrypt'\ncurl -H 'x-action: decrypt'\n", http.StatusBadRequest)
