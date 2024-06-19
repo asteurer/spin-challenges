@@ -43,9 +43,11 @@ func encrypt(encryptionKey, message string) (string, error) {
 }
 
 func decrypt(encryptionKey, message string) (string, error) {
+	base64Error := fmt.Errorf("{\"payloadReceived\": \"%s\"}\nThe request payload is not base64 encoded. Did you mistakenly send a plaintext string?", message)
+
 	ciphertext, err := base64.StdEncoding.DecodeString(message)
 	if err != nil {
-		return "", err
+		return "", base64Error
 	}
 
 	block, err := aes.NewCipher([]byte(encryptionKey))
@@ -61,7 +63,7 @@ func decrypt(encryptionKey, message string) (string, error) {
 	nonceSize := gcm.NonceSize()
 
 	if len(ciphertext) < nonceSize {
-		return "", fmt.Errorf("ciphertext too short")
+		return "", base64Error
 	}
 
 	nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
@@ -96,15 +98,14 @@ func init() {
 
 		messageBytes, err := io.ReadAll(r.Body)
 		if err != nil {
-			fmt.Println("Error reading request body:", err)
-			http.Error(w, "Internal Server Error Occurred\n", http.StatusInternalServerError)
+			http.Error(w, "Error reading request body: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		r.Body.Close()
 
 		if len(messageBytes) == 0 {
 			fmt.Println("No message bytes")
-			http.Error(w, "Please include a body in your request\n", http.StatusBadRequest)
+			http.Error(w, "Please include a body in your request", http.StatusBadRequest)
 			return
 		}
 
@@ -117,8 +118,7 @@ func init() {
 		if action == "encrypt" {
 			encryptedMessage, err := encrypt(encryptionKey, string(messageBytes))
 			if err != nil {
-				fmt.Println("Error encrypting message:", err.Error())
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				http.Error(w, "Error encrypting message: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -127,8 +127,7 @@ func init() {
 		} else if action == "decrypt" {
 			decryptedMessage, err := decrypt(encryptionKey, string(messageBytes))
 			if err != nil {
-				fmt.Println("Error decrypting message:", err.Error())
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				http.Error(w, "Error decrypting message: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
