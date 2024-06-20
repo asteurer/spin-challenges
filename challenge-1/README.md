@@ -46,4 +46,4 @@ You will be building a Spin app (using `encryption-module/main.wasm` as a compon
 Some things to keep in mind:
 - There is a bug in the TinyGo compiler that prevents Spin Golang applications from reading files. If you want to use Golang, you'll need to pass in the `message.txt` file string some other way (i.e. via the body of a curl request or hard-coding).
 - When you create a Spin application with multiple components, the way they will interact with each other is through HTTP calls (i.e. localhost:3000/your-component-http-trigger-route). In order to do this, you must define an `allowed_outbound_host` in your `spin.toml` file as `http://localhost:3000`.
-- If you get stuck, reach out via our [Discord channel](#TODO:_LINK_HERE), or see if [ChatGPT](https://chatgpt.com/) or [Google Gemini](https://gemini.google.com/) can help.
+- If you get stuck, reach out via our [Discord channel](https://www.fermyon.com/blog/fermyon-discord), or see if [ChatGPT](https://chatgpt.com/) or [Google Gemini](https://gemini.google.com/) can help.
