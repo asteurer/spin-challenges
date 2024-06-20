@@ -3,6 +3,7 @@ HTTP 200
 [Asserts]
 header "x-encryption-module-path" exists
 header "x-name" exists
+header "content-type" == "application/json"
 body exists
 [Captures]
 encryptionModulePath: header "x-encryption-module-path"
